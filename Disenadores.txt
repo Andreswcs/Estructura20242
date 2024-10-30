@@ -1,0 +1,10 @@
+Cedula: 1334543
+Nombre: re
+Apellido: frd
+Telefono: re43
+Asignaturas: 4
+Serial: 4
+Modalidad: 4
+Prestamo: false
+Key: 0
+---------------------------------------

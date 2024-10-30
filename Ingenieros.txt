@@ -1,0 +1,20 @@
+Cedula: 123
+Nombre: erty
+Apellido: try
+Telefono: 456
+Semestre: 4
+Serial: r
+Promedio: 45.0
+Presamo: false
+Key: 0
+---------------------------------------
+Cedula: 1011
+Nombre: andres
+Apellido: salinas
+Telefono: 2
+Semestre: 2
+Serial: 99
+Promedio: 2.0
+Presamo: false
+Key: 0
+---------------------------------------
