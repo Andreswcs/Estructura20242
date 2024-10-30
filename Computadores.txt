@@ -1,0 +1,36 @@
+Serial: CP123
+Marca: tru
+Tamaño: 0.0
+Precio: 54.0
+Sistema Operativo: Windows 10
+Procesador: Intel� Core� i5
+Key: 1
+Disponibilidad: true
+---------------------------------------
+Serial: CP678
+Marca: asus
+Tamaño: 2.0
+Precio: 2.0
+Sistema Operativo: Windows 10
+Procesador: Intel® Core™ i5
+Key: 2
+Disponibilidad: true
+---------------------------------------
+Serial: CP1232
+Marca: zipo
+Tamaño: 3.0
+Precio: 3.0
+Sistema Operativo: Windows 11
+Procesador: AMD Ryzen
+Key: 3
+Disponibilidad: true
+---------------------------------------
+Serial: CP3453
+Marca: a
+Tamaño: 2.0
+Precio: 2.0
+Sistema Operativo: Windows 10
+Procesador: Intel® Core™ i5
+Key: 4
+Disponibilidad: true
+---------------------------------------
