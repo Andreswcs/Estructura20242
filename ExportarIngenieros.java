@@ -16,7 +16,7 @@ public class ExportarIngenieros {
                     escriba.write("Semestre: " + inge.getSemestre() + "\n");
                     escriba.write("Serial: " + inge.getSerial() + "\n");
                     escriba.write("Promedio: " + inge.getPromedio() + "\n");
-                    escriba.write("Presamo: "+ inge.isPrestamo() + "\n");
+                    escriba.write("Prestamo: " + inge.isPrestamo() + "\n");
                     escriba.write("Key: " + inge.getKey() + "\n");
                     escriba.write("---------------------------------------\n");
 

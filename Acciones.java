@@ -139,6 +139,9 @@ public class Acciones {
             try {
                 listaDisenos = accion.ImportarDise();
                 listaIngenieros = accion.ImportarInge();
+                listaComputadores = accion.ImportarCompu();
+                listaTabletas = accion.ImportarTable();
+
                 System.out.println("Seleccione una opción:\n"
                         + "1. Estudiante nuevo(registrarse)\n"
                         + "2. Estudiante existente\n"
@@ -169,20 +172,19 @@ public class Acciones {
                     case 2:
 
                         if (opt3 == 1) {
-                            listaComputadores = accion.ImportarCompu();
-                            listaIngenieros = accion.ImportarInge();
                             estudianteIngenieria = accion.idEstudiante_INGENIERIA(listaIngenieros);
                             if (estudianteIngenieria == null) {
                                 break;
                             }
-                            accion.menuIngenieria(estudianteIngenieria, listaComputadores, listaIngenieros);
+                            accion.menuIngenieria(estudianteIngenieria, listaComputadores, listaIngenieros,
+                                    listaDisenos);
                             break;
                         } else if (opt3 == 2) {
                             estudianteDiseño = accion.idEstudiante_DISENO(listaDisenos);
                             if (estudianteDiseño == null) {
                                 break;
                             }
-                            accion.menuDiseño(estudianteDiseño, listaTabletas, listaDisenos);
+                            accion.menuDiseño(estudianteDiseño, listaTabletas, listaDisenos, listaIngenieros);
                             break;
                         } else {
                             System.out.println("Opción no valida");
@@ -205,22 +207,50 @@ public class Acciones {
 
     public int tipoEstudiante() {
 
-        System.out.println("Seleccione una opción:\n"
-                + "1. Estudiante de ingenieria\n"
-                + "2. Estudiante de diseño");
+        boolean bandera = true;
+        int opt = 0;
 
-        return sc.nextInt();
+        while (bandera) {
+
+            try {
+
+                System.out.println("Seleccione una opción:\n"
+                        + "1. Estudiante de ingenieria\n"
+                        + "2. Estudiante de diseño");
+                opt = sc.nextInt();
+
+                switch (opt) {
+                    case 1:
+                        return opt;
+                    case 2:
+                        return opt;
+                    default:
+                        System.out.println("Opcion no valida");
+                        break;
+                }
+
+            } catch (Exception e) {
+                System.out.println("Error de digitación");
+                sc.nextLine();
+                System.out.println();
+            }
+        }
+        return opt;
     }
 
     public void menuIngenieria(ESTUDIANTE_INGENIERIA estudianteIngenieria,
-            LinkedList<COMPUTADOR_PORTATIL> listaComputadores, LinkedList<ESTUDIANTE_INGENIERIA> listaIngenieros) {
+            LinkedList<COMPUTADOR_PORTATIL> listaComputadores, LinkedList<ESTUDIANTE_INGENIERIA> listaIngenieros,
+            LinkedList<ESTUDIANTE_DISENO> listaDisenos) {
 
         Acciones accion = new Acciones();
         boolean continuar = true;
         ExportarIngenieros expoInges = new ExportarIngenieros();
         ExportarPortatil expoCompu = new ExportarPortatil();
+        COMPUTADOR_PORTATIL computador = new COMPUTADOR_PORTATIL(null, null, 0, 0, null, null, 0);
 
         while (continuar) {
+            listaComputadores = accion.ImportarCompu();
+            listaIngenieros = accion.ImportarInge();
 
             try {
 
@@ -230,14 +260,26 @@ public class Acciones {
                         + "2. Modificar préstamo de equipo\n"
                         + "3. Devolución de equipo\n"
                         + "4. Buscar equipo\n"
-                        + "5. Volver");
+                        + "5. Cambiar de carrera\n"
+                        + "6. Volver");
                 int opcionMenu = sc.nextInt();
                 System.out.println("-----------------------------");
 
                 switch (opcionMenu) {
                     case 1:
                         // Metodo de Registrar préstamo de equipo.
-                        accion.prestarComputador(estudianteIngenieria, listaComputadores);
+                        computador = accion.prestarComputador(estudianteIngenieria, listaComputadores);
+
+                        if (computador != null) {
+                            for (ESTUDIANTE_INGENIERIA estudiante_INGENIERIA : listaIngenieros) {
+                                if (estudiante_INGENIERIA.getCedula().equals(estudianteIngenieria.getCedula())) {
+                                    estudiante_INGENIERIA.setKey(computador.getKey());
+                                    estudiante_INGENIERIA.setPrestamo(true);
+                                    break;
+                                }
+                            }
+                        }
+
                         expoInges.exportarArchivo(listaIngenieros);
                         expoCompu.exportarArchivo(listaComputadores);
                         listaComputadores = accion.ImportarCompu();
@@ -246,11 +288,28 @@ public class Acciones {
                         break;
                     case 2:
                         // Metodo de Modificar préstamo de equipo.
-                        accion.modificarPrestamoIngeniero(estudianteIngenieria, listaComputadores, listaIngenieros);
+                        listaIngenieros = accion.modificarPrestamoIngeniero(estudianteIngenieria, listaComputadores,
+                                listaIngenieros);
+                        expoInges.exportarArchivo(listaIngenieros);
+                        expoCompu.exportarArchivo(listaComputadores);
+                        listaComputadores = accion.ImportarCompu();
+                        listaIngenieros = accion.ImportarInge();
+
                         break;
                     case 3:
                         // Metodo de Devoluvion préstamo de equipo.
-                        accion.devolucionComputador(estudianteIngenieria, listaComputadores);
+                        computador = accion.devolucionComputador(estudianteIngenieria, listaComputadores);
+
+                        if (computador != null) {
+                            for (ESTUDIANTE_INGENIERIA estudiante_INGENIERIA : listaIngenieros) {
+                                if (estudiante_INGENIERIA.getCedula().equals(estudianteIngenieria.getCedula())) {
+                                    estudiante_INGENIERIA.setKey(0);
+                                    estudiante_INGENIERIA.setPrestamo(false);
+                                    break;
+                                }
+                            }
+                        }
+
                         expoInges.exportarArchivo(listaIngenieros);
                         expoCompu.exportarArchivo(listaComputadores);
                         listaComputadores = accion.ImportarCompu();
@@ -262,6 +321,12 @@ public class Acciones {
                         accion.buscarComputador(estudianteIngenieria, listaComputadores);
                         break;
                     case 5:
+                        // Cambiar carrera
+                        listaIngenieros = accion.cambiarCarreraIngenieria(estudianteIngenieria, listaIngenieros,
+                                listaDisenos);
+                        continuar = false;
+                        break;
+                    case 6:
                         continuar = false;
                         break;
                     default:
@@ -278,12 +343,17 @@ public class Acciones {
     }
 
     public void menuDiseño(ESTUDIANTE_DISENO estudianteDiseño, LinkedList<TABLETA_GRAFICA> listaTabletas,
-            LinkedList<ESTUDIANTE_DISENO> listaDisenos) {
+            LinkedList<ESTUDIANTE_DISENO> listaDisenos, LinkedList<ESTUDIANTE_INGENIERIA> listaIngenieros) {
 
+        TABLETA_GRAFICA tableta = new TABLETA_GRAFICA(null, null, 0, 0, null, 0, 0);
         Acciones accion = new Acciones();
         boolean continuar = true;
+        ExportarDisenadores expoDise = new ExportarDisenadores();
+        ExportarTableta expoTable = new ExportarTableta();
 
         while (continuar) {
+            listaDisenos = accion.ImportarDise();
+            listaTabletas = accion.ImportarTable();
 
             try {
 
@@ -293,28 +363,71 @@ public class Acciones {
                         + "2. Modificar préstamo de equipo\n"
                         + "3. Devolución de equipo\n"
                         + "4. Buscar equipo\n"
-                        + "5. Volver");
+                        + "5. Cambiar de carrera\n"
+                        + "6. Volver");
                 int opcionMenu = sc.nextInt();
                 System.out.println("-----------------------------");
 
                 switch (opcionMenu) {
                     case 1:
                         // Metodo de Registrar préstamo de equipo.
-                        accion.prestarTableta(estudianteDiseño, listaTabletas);
+                        tableta = accion.prestarTableta(estudianteDiseño, listaTabletas);
+
+                        if (tableta != null) {
+                            for (ESTUDIANTE_DISENO estudiante_DISENO : listaDisenos) {
+                                if (estudiante_DISENO.getCedula().equals(estudianteDiseño.getCedula())) {
+                                    estudiante_DISENO.setKey(tableta.getKey());
+                                    estudiante_DISENO.setPrestamo(true);
+                                    break;
+                                }
+                            }
+                        }
+
+                        expoDise.exportarArchivo(listaDisenos);
+                        expoTable.exportarArchivo(listaTabletas);
+                        listaDisenos = accion.ImportarDise();
+                        listaTabletas = accion.ImportarTable();
+
                         break;
                     case 2:
                         // Metodo de Modificar préstamo de equipo.
-                        accion.modificarPrestamoDiseños(estudianteDiseño, listaTabletas, listaDisenos);
+                        listaDisenos = accion.modificarPrestamoDiseños(estudianteDiseño, listaTabletas, listaDisenos);
+                        expoDise.exportarArchivo(listaDisenos);
+                        expoTable.exportarArchivo(listaTabletas);
+                        listaDisenos = accion.ImportarDise();
+                        listaTabletas = accion.ImportarTable();
+
                         break;
                     case 3:
                         // Metodo de Devoluvion préstamo de equipo.
-                        accion.devolucionTableta(estudianteDiseño, listaTabletas);
+                        tableta = accion.devolucionTableta(estudianteDiseño, listaTabletas);
+
+                        if (tableta != null) {
+                            for (ESTUDIANTE_DISENO estudiante_DISENO : listaDisenos) {
+                                if (estudiante_DISENO.getCedula().equals(estudianteDiseño.getCedula())) {
+                                    estudiante_DISENO.setKey(0);
+                                    estudiante_DISENO.setPrestamo(false);
+                                    break;
+                                }
+                            }
+                        }
+
+                        expoDise.exportarArchivo(listaDisenos);
+                        expoTable.exportarArchivo(listaTabletas);
+                        listaDisenos = accion.ImportarDise();
+                        listaTabletas = accion.ImportarTable();
+
                         break;
                     case 4:
                         // Metodo de buscar equipo.
                         accion.buscarTableta(estudianteDiseño, listaTabletas);
                         break;
                     case 5:
+                        // Cambiar carrera
+                        listaDisenos = accion.cambiarCarreraDiseno(estudianteDiseño, listaDisenos, listaIngenieros);
+                        continuar = false;
+                        break;
+                    case 6:
                         continuar = false;
                         break;
                     default:
@@ -343,8 +456,8 @@ public class Acciones {
         System.out.println("Cedula:");
         estudiante.setCedula(sc.next());
 
-        for (ESTUDIANTE_INGENIERIA estudiante_INGENIERIA : listaIngenieros) {
-            if (estudiante.getCedula().equals(estudiante_INGENIERIA.getCedula())) {
+        for (ESTUDIANTE_INGENIERIA estudiante_DISENO : listaIngenieros) {
+            if (estudiante.getCedula().equals(estudiante_DISENO.getCedula())) {
                 System.out.println("Este estudiante ya existe en la base de datos");
                 return listaIngenieros;
             }
@@ -363,8 +476,8 @@ public class Acciones {
         System.out.println("Serial:");
         estudiante.setSerial(sc.next());
 
-        for (ESTUDIANTE_INGENIERIA estudiante_INGENIERIA : listaIngenieros) {
-            if (estudiante.getSerial().equals(estudiante_INGENIERIA.getSerial())) {
+        for (ESTUDIANTE_INGENIERIA estudiante_DISENO : listaIngenieros) {
+            if (estudiante.getSerial().equals(estudiante_DISENO.getSerial())) {
                 System.out.println("Este serial ya existe en la base de datos");
                 return listaIngenieros;
             }
@@ -421,8 +534,8 @@ public class Acciones {
         System.out.println("Serial:");
         estudiante.setSerial(sc.next());
 
-        for (ESTUDIANTE_INGENIERIA estudiante_INGENIERIA : listaIngenieros) {
-            if (estudiante.getSerial().equals(estudiante_INGENIERIA.getSerial())) {
+        for (ESTUDIANTE_INGENIERIA estudiante_DISENO : listaIngenieros) {
+            if (estudiante.getSerial().equals(estudiante_DISENO.getSerial())) {
                 System.out.println("Este serial ya existe en la base de datos");
                 return listaDisenos;
             }
@@ -706,10 +819,10 @@ public class Acciones {
         System.out.println("Digite su cedula o su serial asociado:");
         String idEstudiante = sc.next();
 
-        for (ESTUDIANTE_INGENIERIA estudiante_INGENIERIA : listaIngenieros) {
-            if (estudiante_INGENIERIA.getCedula().equals(idEstudiante)
-                    || estudiante_INGENIERIA.getSerial().equals(idEstudiante)) {
-                estudiante = estudiante_INGENIERIA;
+        for (ESTUDIANTE_INGENIERIA estudiante_DISENO : listaIngenieros) {
+            if (estudiante_DISENO.getCedula().equals(idEstudiante)
+                    || estudiante_DISENO.getSerial().equals(idEstudiante)) {
+                estudiante = estudiante_DISENO;
                 bandera = true;
                 break;
             }
@@ -849,13 +962,15 @@ public class Acciones {
         return tableta;
     }
 
-    public LinkedList<COMPUTADOR_PORTATIL> modificarPrestamoIngeniero(ESTUDIANTE_INGENIERIA estudianteIngenieria,
+    public LinkedList<ESTUDIANTE_INGENIERIA> modificarPrestamoIngeniero(ESTUDIANTE_INGENIERIA estudianteIngenieria,
             LinkedList<COMPUTADOR_PORTATIL> listaComputadores, LinkedList<ESTUDIANTE_INGENIERIA> listaIngenieros) {
 
         Acciones accion = new Acciones();
         boolean bandera = false;
         ESTUDIANTE_INGENIERIA estudianteNuevo = new ESTUDIANTE_INGENIERIA(null, null, null, null, 0, 0, null, 0);
         COMPUTADOR_PORTATIL computador = new COMPUTADOR_PORTATIL(null, null, 0, 0, null, null, 0);
+        LinkedList<ESTUDIANTE_INGENIERIA> lista = listaIngenieros;
+
         for (COMPUTADOR_PORTATIL computador_PORTATIL : listaComputadores) {
 
             if (estudianteIngenieria.getKey() == computador_PORTATIL.getKey()) {
@@ -874,36 +989,62 @@ public class Acciones {
                         System.out.println("Opción no valida");
                         break;
                 }
-
-                estudianteIngenieria.setKey(0);
-                estudianteIngenieria.setPrestamo(false);
                 computador = computador_PORTATIL;
                 bandera = true;
                 System.out.println("");
-                break;
-            } else {
-                System.out.println("Este estudiante no tiene ningun equipo asociado");
                 break;
             }
         }
 
         if (bandera) {
 
+            System.out.println("INGRESE EL SERIAL O CEDULA DE LA PERSONA A LA QUE VA ASOCIAR ESTE COMPUTADOR\n");
             estudianteNuevo = accion.idEstudiante_INGENIERIA(listaIngenieros);
+
+            if (estudianteNuevo.isPrestamo()) {
+                System.out.println("Este estudiante ya tiene un computador asociado\n");
+                return lista;
+            }
+
             estudianteNuevo.setKey(computador.getKey());
             estudianteNuevo.setPrestamo(true);
             System.out.println("---MODIFICACÓN EXITOSA---\n");
+
+            for (ESTUDIANTE_INGENIERIA estudiante_INGENIERIA : listaIngenieros) {
+                if (estudiante_INGENIERIA.getCedula().equals(estudianteNuevo.getCedula())) {
+                    estudiante_INGENIERIA.setKey(computador.getKey());
+                    estudiante_INGENIERIA.setPrestamo(true);
+                    break;
+                }
+            }
+
+            if (bandera) {
+                for (ESTUDIANTE_INGENIERIA estudiante_INGENIERIA : listaIngenieros) {
+                    if (estudiante_INGENIERIA.getCedula().equals(estudianteIngenieria.getCedula())) {
+                        estudiante_INGENIERIA.setKey(0);
+                        estudiante_INGENIERIA.setPrestamo(false);
+                        break;
+                    }
+                }
+            }
+
+            return lista;
         }
-        return null;
+
+        System.out.println("Este estudiante no tiene ningun equipo asociado");
+
+        return lista;
     }
 
-    public LinkedList<TABLETA_GRAFICA> modificarPrestamoDiseños(ESTUDIANTE_DISENO estudianteDiseno,
+    public LinkedList<ESTUDIANTE_DISENO> modificarPrestamoDiseños(ESTUDIANTE_DISENO estudianteDiseno,
             LinkedList<TABLETA_GRAFICA> listaTabletas, LinkedList<ESTUDIANTE_DISENO> listaDisenos) {
 
         Acciones accion = new Acciones();
         boolean bandera = false;
         ESTUDIANTE_DISENO estudianteNuevo = new ESTUDIANTE_DISENO(null, null, null, null, null, 0, null);
         TABLETA_GRAFICA tableta = new TABLETA_GRAFICA(null, null, 0, 0, null, 0, 0);
+        LinkedList<ESTUDIANTE_DISENO> lista = listaDisenos;
+
         for (TABLETA_GRAFICA tableta_GRAFICA : listaTabletas) {
 
             if (estudianteDiseno.getKey() == tableta_GRAFICA.getKey()) {
@@ -923,42 +1064,62 @@ public class Acciones {
                         break;
                 }
 
-                estudianteDiseno.setKey(0);
-                estudianteDiseno.setPrestamo(false);
                 tableta = tableta_GRAFICA;
                 bandera = true;
                 System.out.println("");
-                break;
-            } else {
-                System.out.println("Este estudiante no tiene ningun equipo asociado");
                 break;
             }
         }
 
         if (bandera) {
 
+            System.out.println("INGRESE EL SERIAL O CEDULA DE LA PERSONA A LA QUE VA ASOCIAR ESTE COMPUTADOR\n");
             estudianteNuevo = accion.idEstudiante_DISENO(listaDisenos);
+
+            if (estudianteNuevo.isPrestamo()) {
+                System.out.println("Este estudiante ya tiene un computador asociado\n");
+                return lista;
+            }
+
             estudianteNuevo.setKey(tableta.getKey());
             estudianteNuevo.setPrestamo(true);
             System.out.println("---MODIFICACÓN EXITOSA---\n");
+
+            for (ESTUDIANTE_DISENO estudiante_DISENO : listaDisenos) {
+                if (estudiante_DISENO.getCedula().equals(estudianteNuevo.getCedula())) {
+                    estudiante_DISENO.setKey(tableta.getKey());
+                    estudiante_DISENO.setPrestamo(true);
+                    break;
+                }
+            }
+
+            if (bandera) {
+                for (ESTUDIANTE_DISENO estudiante_DISENO : listaDisenos) {
+                    if (estudiante_DISENO.getCedula().equals(estudianteDiseno.getCedula())) {
+                        estudiante_DISENO.setKey(0);
+                        estudiante_DISENO.setPrestamo(false);
+                        break;
+                    }
+                }
+            }
+            return lista;
         }
-        return null;
+
+        System.out.println("Este estudiante no tiene ningun equipo asociado");
+
+        return lista;
     }
 
-    public LinkedList<TABLETA_GRAFICA> modificarPrestamoDiseñador(LinkedList<ESTUDIANTE_DISENO> listaDisenos,
-            LinkedList<TABLETA_GRAFICA> listaTabletas) {
-
-        return null;
-    }
-
-    public boolean devolucionComputador(ESTUDIANTE_INGENIERIA estudiante,
+    public COMPUTADOR_PORTATIL devolucionComputador(ESTUDIANTE_INGENIERIA estudiante,
             LinkedList<COMPUTADOR_PORTATIL> listaComputadores) {
 
         boolean bandera = false;
+        COMPUTADOR_PORTATIL computador = new COMPUTADOR_PORTATIL(null, null, 0, 0, null, null, 0);
 
         for (COMPUTADOR_PORTATIL computador_PORTATIL : listaComputadores) {
 
             if (estudiante.getKey() == computador_PORTATIL.getKey()) {
+                computador = computador_PORTATIL;
                 System.out.println("¿Estas seguro que quieres devolver este equipo?\n"
                         + "1. SI\n"
                         + "2. NO");
@@ -969,7 +1130,7 @@ public class Acciones {
                     case 1:
                         break;
                     case 2:
-                        return false;
+                        return null;
                     default:
                         System.out.println("Opción no valida");
                         break;
@@ -988,19 +1149,21 @@ public class Acciones {
         }
         if (!bandera) {
             System.out.println("Este estudiante no tiene ningún préstamo activo\n");
-            return false;
+            return null;
         }
 
-        return true;
+        return computador;
     }
 
-    public boolean devolucionTableta(ESTUDIANTE_DISENO estudiante, LinkedList<TABLETA_GRAFICA> listaTabletas) {
+    public TABLETA_GRAFICA devolucionTableta(ESTUDIANTE_DISENO estudiante, LinkedList<TABLETA_GRAFICA> listaTabletas) {
 
         boolean bandera = false;
+        TABLETA_GRAFICA tableta = new TABLETA_GRAFICA(null, null, 0, 0, null, 0, 0);
 
         for (TABLETA_GRAFICA tableta_GRAFICA : listaTabletas) {
 
             if (estudiante.getKey() == tableta_GRAFICA.getKey()) {
+                tableta = tableta_GRAFICA;
                 System.out.println("¿Estas seguro que quieres devolver este equipo?\n"
                         + "1. SI\n"
                         + "2. NO");
@@ -1011,7 +1174,7 @@ public class Acciones {
                     case 1:
                         break;
                     case 2:
-                        return false;
+                        return null;
                     default:
                         System.out.println("Opción no valida");
                         break;
@@ -1030,9 +1193,9 @@ public class Acciones {
         }
         if (!bandera) {
             System.out.println("Este estudiante no tiene ningún préstamo activo\n");
-            return false;
+            return null;
         }
-        return true;
+        return tableta;
     }
 
     public void buscarComputador(ESTUDIANTE_INGENIERIA estudiante, LinkedList<COMPUTADOR_PORTATIL> listaComputadores) {
@@ -1086,5 +1249,115 @@ public class Acciones {
         if (!bandera) {
             System.out.println("Este estudiante no tiene ningún préstamo activo\n");
         }
+    }
+
+    public LinkedList<ESTUDIANTE_INGENIERIA> cambiarCarreraIngenieria(ESTUDIANTE_INGENIERIA estudianteIngenieria,
+            LinkedList<ESTUDIANTE_INGENIERIA> listaIngenieros,
+            LinkedList<ESTUDIANTE_DISENO> listaDisenos) {
+
+        ExportarDisenadores expodise = new ExportarDisenadores();
+        ExportarIngenieros expoInges = new ExportarIngenieros();
+
+        if (estudianteIngenieria.isPrestamo()) {
+            System.out.println("Mientras tenga un prestamo activo, no puede cambiarse de carrera\n");
+            return listaIngenieros;
+        }
+
+        System.out.println("¿Estas seguro que quieres cambiar de carrera ---> Diseñadores?\n"
+                + "1. SI\n"
+                + "2. NO");
+
+        int opt = sc.nextInt();
+
+        switch (opt) {
+            case 1:
+                break;
+            case 2:
+                return listaIngenieros;
+            default:
+                System.out.println("Opción no valida");
+                return listaIngenieros;
+        }
+
+        for (ESTUDIANTE_INGENIERIA estudiante_INGENIERIA : listaIngenieros) {
+            if (estudiante_INGENIERIA.getSerial().equals(estudianteIngenieria.getSerial())) {
+                ESTUDIANTE_DISENO estudianteTraspaso = new ESTUDIANTE_DISENO(null, null, null, null, null, 0, null);
+                estudianteTraspaso.setCedula(estudianteIngenieria.getCedula());
+                estudianteTraspaso.setNombre(estudianteIngenieria.getNombre());
+                estudianteTraspaso.setApellido(estudianteIngenieria.getApellido());
+                estudianteTraspaso.setTelefono(estudianteIngenieria.getTelefono());
+                estudianteTraspaso.setSerial(estudianteIngenieria.getSerial());
+                estudianteTraspaso.setPrestamo(false);
+                estudianteTraspaso.setKey(0);
+                System.out.println("Ingrese la Modalidad:");
+                estudianteTraspaso.setModalidad(sc.next());
+                System.out.println("Ingrese las Asignaturas:");
+                estudianteTraspaso.setAsignaturas(sc.nextInt());
+
+                listaIngenieros.remove(estudiante_INGENIERIA);
+                listaDisenos.add(estudianteTraspaso);
+                break;
+            }
+        }
+
+        expoInges.exportarArchivo(listaIngenieros);
+        expodise.exportarArchivo(listaDisenos);
+
+        return listaIngenieros;
+    }
+
+    public LinkedList<ESTUDIANTE_DISENO> cambiarCarreraDiseno(ESTUDIANTE_DISENO estudianteDiseno,
+            LinkedList<ESTUDIANTE_DISENO> listaDisenos, LinkedList<ESTUDIANTE_INGENIERIA> listaIngenieros) {
+
+        ExportarDisenadores expodise = new ExportarDisenadores();
+        ExportarIngenieros expoInges = new ExportarIngenieros();
+
+        if (estudianteDiseno.isPrestamo()) {
+            System.out.println("Mientras tenga un prestamo activo, no puede cambiarse de carrera\n");
+            return listaDisenos;
+        }
+
+        System.out.println("¿Estas seguro que quieres cambiar de carrera ---> Ingenieros?\n"
+                + "1. SI\n"
+                + "2. NO");
+
+        int opt = sc.nextInt();
+
+        switch (opt) {
+            case 1:
+                break;
+            case 2:
+                return listaDisenos;
+            default:
+                System.out.println("Opción no valida");
+                return listaDisenos;
+        }
+
+        for (ESTUDIANTE_DISENO estudiante_DISENO : listaDisenos) {
+            if (estudiante_DISENO.getSerial().equals(estudianteDiseno.getSerial())) {
+                ESTUDIANTE_INGENIERIA estudianteTraspaso = new ESTUDIANTE_INGENIERIA(null, null, null, null, 0, 0, null,
+                        0);
+                estudianteTraspaso.setCedula(estudianteDiseno.getCedula());
+                estudianteTraspaso.setNombre(estudianteDiseno.getNombre());
+                estudianteTraspaso.setApellido(estudianteDiseno.getApellido());
+                estudianteTraspaso.setTelefono(estudianteDiseno.getTelefono());
+                estudianteTraspaso.setSerial(estudianteDiseno.getSerial());
+                estudianteTraspaso.setPrestamo(false);
+                estudianteTraspaso.setKey(0);
+                System.out.println("Ingrese el Semestre:");
+                estudianteTraspaso.setSemestre(sc.nextInt());
+                System.out.println("Ingrese el Promedio:");
+                estudianteTraspaso.setPromedio(sc.nextFloat());
+
+                listaDisenos.remove(estudiante_DISENO);
+                listaIngenieros.add(estudianteTraspaso);
+                break;
+            }
+        }
+
+        expodise.exportarArchivo(listaDisenos);
+        expoInges.exportarArchivo(listaIngenieros);
+
+        return listaDisenos;
     }
 }
