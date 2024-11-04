@@ -37,18 +37,18 @@ public class ImportarTableta {
                     }
                 } else if (line.startsWith("Almacenamiento: ")) {
                     if (tableta != null) {
-                        tableta.setMarca(line.substring(11).trim());
+                        tableta.setAlmacenamiento(line.substring(16).trim());
                     }
                 } else if (line.startsWith("Peso: ")) {
                     if (tableta != null) {
                         tableta.setPeso(Float.parseFloat(line.substring(6).trim()));
                     }
-                } else if(line.startsWith("Key: ")){
-                    if(tableta != null){
+                } else if (line.startsWith("Key: ")) {
+                    if (tableta != null) {
                         tableta.setKey(Integer.parseInt(line.substring(5).trim()));
                     }
-                } else if (line.startsWith("Disponibilidad: ")){
-                    if(tableta != null){
+                } else if (line.startsWith("Disponibilidad: ")) {
+                    if (tableta != null) {
                         tableta.setDisponible(Boolean.parseBoolean(line.substring(16).trim()));
                     }
                 }

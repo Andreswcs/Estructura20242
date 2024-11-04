@@ -1,36 +1,36 @@
-Serial: TG3434
-Marca: asdasd
-Tamaño: 2.0
-Precio: 2.0
-Almacenamiento: null
+Serial: TG4444
+Marca: asuss
+Tamaño: 3.0
+Precio: 3.0
+Almacenamiento: 256 GB
 Peso: 2.0
 Key: 1
 Disponibilidad: true
 ---------------------------------------
-Serial: TG9876
-Marca: sansun
-Tamaño: 3.0
-Precio: 3.0
-Almacenamiento: null
-Peso: 2.0
+Serial: TG99886
+Marca: rere
+Tamaño: 2.0
+Precio: 4.0
+Almacenamiento: 1 TB
+Peso: 5.0
+Key: 2
+Disponibilidad: true
+---------------------------------------
+Serial: TG8776
+Marca: sip
+Tamaño: 5.0
+Precio: 12.0
+Almacenamiento: 256 GB
+Peso: 9.0
 Key: 3
 Disponibilidad: true
 ---------------------------------------
-Serial: TG82221
-Marca: wip
-Tamaño: 1.0
-Precio: 8.0
-Almacenamiento: null
-Peso: 5.0
-Key: 4
-Disponibilidad: true
----------------------------------------
-Serial: TG3332
-Marca: adssad
-Tamaño: 2.0
-Precio: 2.0
+Serial: TG66633
+Marca: pepe
+Tamaño: 3.0
+Precio: 4.0
 Almacenamiento: 512 GB
-Peso: 2.0
-Key: 2
+Peso: 6.0
+Key: 4
 Disponibilidad: true
 ---------------------------------------

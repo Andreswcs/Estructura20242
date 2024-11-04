@@ -1,10 +1,30 @@
-Cedula: 1334543
-Nombre: re
-Apellido: frd
-Telefono: re43
+Cedula: 3444
+Nombre: Felipe
+Apellido: Rendon
+Telefono: 3459875422
 Asignaturas: 4
-Serial: 4
-Modalidad: 4
+Serial: 999
+Modalidad: 2
+Prestamo: false
+Key: 0
+---------------------------------------
+Cedula: 8838
+Nombre: cristian
+Apellido: gonzales
+Telefono: 455029128
+Asignaturas: 5
+Serial: 7763
+Modalidad: Presencial
+Prestamo: false
+Key: 0
+---------------------------------------
+Cedula: 123
+Nombre: Juan
+Apellido: Restrepo
+Telefono: 3103875422
+Asignaturas: 3
+Serial: r
+Modalidad: Virtual
 Prestamo: false
 Key: 0
 ---------------------------------------
